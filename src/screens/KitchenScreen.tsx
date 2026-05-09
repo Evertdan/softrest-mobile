@@ -8,6 +8,10 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import { StackScreenProps } from '@react-navigation/stack';
+import { OrdersStackParamList } from '../navigation/AppNavigator';
+
+type Props = StackScreenProps<OrdersStackParamList, 'Kitchen'>;
 
 type KitchenTab = 'Pendiente' | 'En preparación' | 'Listo';
 
@@ -40,7 +44,7 @@ const MOCK_ORDERS: Record<KitchenTab, KitchenOrder[]> = {
 
 const TABS: KitchenTab[] = ['Pendiente', 'En preparación', 'Listo'];
 
-export function KitchenScreen() {
+export function KitchenScreen({ navigation }: Props) {
   const [activeTab, setActiveTab] = useState<KitchenTab>('Pendiente');
 
   const getBorderColor = (tab: KitchenTab) => {

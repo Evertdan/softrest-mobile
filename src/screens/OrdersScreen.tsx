@@ -10,9 +10,9 @@ import {
   TextInput,
 } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { OrdersStackParamList } from '../navigation/AppNavigator';
 
-type Props = StackScreenProps<RootStackParamList, 'Orders'>;
+type Props = StackScreenProps<OrdersStackParamList, 'OrdersList'>;
 
 type OrderStatus = 'Todas' | 'En preparación' | 'Lista' | 'Entregada';
 
@@ -38,7 +38,7 @@ const MOCK_ORDERS: Order[] = [
 
 const FILTERS: OrderStatus[] = ['Todas', 'En preparación', 'Lista', 'Entregada'];
 
-export default function OrdersScreen({ navigation }: Props) {
+export function OrdersScreen({ navigation }: Props) {
   const [activeFilter, setActiveFilter] = useState<OrderStatus>('Todas');
   const [searchQuery, setSearchQuery] = useState('');
 

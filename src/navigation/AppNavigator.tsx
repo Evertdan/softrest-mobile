@@ -3,114 +3,106 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
-import { SafeAreaView, TouchableOpacity, Text, View } from 'react-native';
 
+// Auth Stack Screens
 import { LoginScreen } from '../screens/LoginScreen';
+
+// Main Tab Screens
 import { DashboardScreen } from '../screens/DashboardScreen';
+import { TablesScreen } from '../screens/TablesScreen';
 import { OrdersScreen } from '../screens/OrdersScreen';
 import { KitchenScreen } from '../screens/KitchenScreen';
-import { ProductsScreen } from '../screens/ProductsScreen';
-import { TablesScreen } from '../screens/TablesScreen';
-import { CashierScreen } from '../screens/CashierScreen';
 import { CustomersScreen } from '../screens/CustomersScreen';
+import { CashierScreen } from '../screens/CashierScreen';
+import { ProductsScreen } from '../screens/ProductsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 
-const COLORS = {
-  primary: '#C05621',
-  inactive: '#52525B',
-  white: '#FFFFFF',
-  canvas: '#FAFAF9',
-  charcoal: '#18181B',
+// ─── Type Definitions ────────────────────────────────────────────────────────
+
+export type RootStackParamList = {
+  Auth: undefined;
+  Main: undefined;
 };
 
-// Auth Stack
 export type AuthStackParamList = {
   Login: undefined;
 };
 
-const AuthStack = createStackNavigator<AuthStackParamList>();
+export type MainTabParamList = {
+  Inicio: undefined;
+  Mesas: undefined;
+  Pedidos: undefined;
+  Clientes: undefined;
+  Más: undefined;
+};
 
-function AuthNavigator() {
-  return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name="Login" component={LoginScreen} />
-    </AuthStack.Navigator>
-  );
-}
-
-// Orders Stack (nested within Pedidos tab)
 export type OrdersStackParamList = {
   OrdersList: undefined;
   Kitchen: undefined;
 };
 
+export type MoreStackParamList = {
+  Cashier: undefined;
+  Products: undefined;
+  Settings: undefined;
+};
+
+// ─── Navigators ──────────────────────────────────────────────────────────────
+
+const RootStack = createStackNavigator<RootStackParamList>();
+const AuthStack = createStackNavigator<AuthStackParamList>();
+const MainTab = createBottomTabNavigator<MainTabParamList>();
 const OrdersStackNav = createStackNavigator<OrdersStackParamList>();
+const MoreStackNav = createStackNavigator<MoreStackParamList>();
+
+// ─── Tab Bar Options ─────────────────────────────────────────────────────────
+
+const TAB_BAR_OPTIONS = {
+  tabBarActiveTintColor: '#C05621',
+  tabBarInactiveTintColor: '#52525B',
+  tabBarStyle: {
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E4E4E7',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 8,
+    paddingBottom: 8,
+    paddingTop: 4,
+    height: 64,
+  },
+  tabBarLabelStyle: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  headerShown: false,
+};
+
+// ─── Stack Screen Options ────────────────────────────────────────────────────
+
+const STACK_SCREEN_OPTIONS = {
+  headerShown: false,
+};
+
+// ─── Orders Stack (Nested inside Pedidos tab) ────────────────────────────────
 
 function OrdersStack() {
   return (
-    <OrdersStackNav.Navigator screenOptions={{ headerShown: false }}>
+    <OrdersStackNav.Navigator screenOptions={STACK_SCREEN_OPTIONS}>
       <OrdersStackNav.Screen name="OrdersList" component={OrdersScreen} />
       <OrdersStackNav.Screen name="Kitchen" component={KitchenScreen} />
     </OrdersStackNav.Navigator>
   );
 }
 
-// More Stack (nested within Más tab)
-export type MoreStackParamList = {
-  MoreMenu: undefined;
-  Cashier: undefined;
-  Products: undefined;
-  Settings: undefined;
-};
-
-const MoreStackNav = createStackNavigator<MoreStackParamList>();
-
-function MoreMenuScreen({ navigation }: any) {
-  const menuItems = [
-    { icon: 'point-of-sale', label: 'Caja', route: 'Cashier' },
-    { icon: 'restaurant-menu', label: 'Menú', route: 'Products' },
-    { icon: 'settings', label: 'Configuración', route: 'Settings' },
-  ];
-
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.canvas }}>
-      <View style={{ padding: 16 }}>
-        <Text style={{ fontSize: 28, fontWeight: '700', color: COLORS.charcoal, marginBottom: 24 }}>
-          Más opciones
-        </Text>
-        {menuItems.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={{
-              backgroundColor: COLORS.white,
-              borderRadius: 12,
-              padding: 16,
-              marginBottom: 12,
-              flexDirection: 'row',
-              alignItems: 'center',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.04,
-              shadowRadius: 4,
-              elevation: 2,
-            }}
-            onPress={() => navigation.navigate(item.route)}
-            activeOpacity={0.8}
-          >
-            <MaterialIcons name={item.icon as any} size={24} color={COLORS.primary} style={{ marginRight: 12 }} />
-            <Text style={{ fontSize: 16, fontWeight: '500', color: COLORS.charcoal, flex: 1 }}>{item.label}</Text>
-            <MaterialIcons name="chevron-right" size={24} color="#A1A1AA" />
-          </TouchableOpacity>
-        ))}
-      </View>
-    </SafeAreaView>
-  );
-}
+// ─── More Stack (Nested inside Más tab) ──────────────────────────────────────
 
 function MoreStack() {
   return (
-    <MoreStackNav.Navigator screenOptions={{ headerShown: false }}>
-      <MoreStackNav.Screen name="MoreMenu" component={MoreMenuScreen} />
+    <MoreStackNav.Navigator screenOptions={STACK_SCREEN_OPTIONS}>
       <MoreStackNav.Screen name="Cashier" component={CashierScreen} />
       <MoreStackNav.Screen name="Products" component={ProductsScreen} />
       <MoreStackNav.Screen name="Settings" component={SettingsScreen} />
@@ -118,113 +110,78 @@ function MoreStack() {
   );
 }
 
-// Main Tabs
-export type MainTabParamList = {
-  Home: undefined;
-  Tables: undefined;
-  Orders: undefined;
-  Customers: undefined;
-  More: undefined;
-};
+// ─── Auth Stack ──────────────────────────────────────────────────────────────
 
-const MainTab = createBottomTabNavigator<MainTabParamList>();
-
-function TabBarIcon({ name, color }: { name: any; color: string }) {
-  return <MaterialIcons name={name} size={24} color={color} />;
+function AuthNavigator() {
+  return (
+    <AuthStack.Navigator screenOptions={STACK_SCREEN_OPTIONS}>
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+    </AuthStack.Navigator>
+  );
 }
 
-function MainTabs() {
+// ─── Main Tabs ───────────────────────────────────────────────────────────────
+
+function MainNavigator() {
   return (
-    <MainTab.Navigator
-      screenOptions={{
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.inactive,
-        tabBarStyle: {
-          backgroundColor: COLORS.white,
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-          paddingBottom: 8,
-          paddingTop: 8,
-          height: 64,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.05,
-          shadowRadius: 12,
-          elevation: 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-        },
-        headerShown: false,
-      }}
-    >
+    <MainTab.Navigator screenOptions={TAB_BAR_OPTIONS}>
       <MainTab.Screen
-        name="Home"
+        name="Inicio"
         component={DashboardScreen}
         options={{
-          tabBarLabel: 'Inicio',
-          tabBarIcon: ({ color }) => <TabBarIcon name="dashboard" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="dashboard" size={size} color={color} />
+          ),
         }}
       />
       <MainTab.Screen
-        name="Tables"
+        name="Mesas"
         component={TablesScreen}
         options={{
-          tabBarLabel: 'Mesas',
-          tabBarIcon: ({ color }) => <TabBarIcon name="table-restaurant" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="table-restaurant" size={size} color={color} />
+          ),
         }}
       />
       <MainTab.Screen
-        name="Orders"
+        name="Pedidos"
         component={OrdersStack}
         options={{
-          tabBarLabel: 'Pedidos',
-          tabBarIcon: ({ color }) => <TabBarIcon name="receipt-long" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="receipt-long" size={size} color={color} />
+          ),
         }}
       />
       <MainTab.Screen
-        name="Customers"
+        name="Clientes"
         component={CustomersScreen}
         options={{
-          tabBarLabel: 'Clientes',
-          tabBarIcon: ({ color }) => <TabBarIcon name="people" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="people" size={size} color={color} />
+          ),
         }}
       />
       <MainTab.Screen
-        name="More"
+        name="Más"
         component={MoreStack}
         options={{
-          tabBarLabel: 'Más',
-          tabBarIcon: ({ color }) => <TabBarIcon name="menu" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="menu" size={size} color={color} />
+          ),
         }}
       />
     </MainTab.Navigator>
   );
 }
 
-// Root Navigator
-export type RootStackParamList = {
-  Auth: undefined;
-  Main: undefined;
-};
-
-const RootStack = createStackNavigator<RootStackParamList>();
+// ─── Root Navigator ──────────────────────────────────────────────────────────
 
 export default function AppNavigator() {
-  const isAuthenticated = false;
-
   return (
     <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
-          <RootStack.Screen name="Main" component={MainTabs} />
-        ) : (
-          <>
-            <RootStack.Screen name="Auth" component={AuthNavigator} />
-            <RootStack.Screen name="Main" component={MainTabs} />
-          </>
-        )}
+      <RootStack.Navigator screenOptions={STACK_SCREEN_OPTIONS} initialRouteName="Auth">
+        <RootStack.Screen name="Auth" component={AuthNavigator} />
+        <RootStack.Screen name="Main" component={MainNavigator} />
       </RootStack.Navigator>
     </NavigationContainer>
   );

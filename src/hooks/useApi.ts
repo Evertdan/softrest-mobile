@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ordersApi, tablesApi, productsApi, customersApi, paymentsApi } from '../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ordersApi, tablesApi, productsApi, customersApi, paymentsApi, authApi, LoginCredentials } from '../services/api';
 
 export function useOrders(status?: string) {
   const [orders, setOrders] = useState<any[]>([]);
@@ -129,4 +130,28 @@ export function usePayments() {
   }, [fetchPayments]);
 
   return { payments, loading, error, refetch: fetchPayments };
+}
+
+export function useLogin() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const login = useCallback(async (credentials: LoginCredentials) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await authApi.login(credentials);
+      await AsyncStorage.setItem('auth_token', response.token);
+      return response;
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 'Error al iniciar sesión';
+      setError(errorMessage);
+      console.error('Login error:', err);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { login, isLoading, error };
 }

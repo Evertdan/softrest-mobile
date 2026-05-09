@@ -10,9 +10,9 @@ import {
   TextInput,
 } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { MoreStackParamList } from '../navigation/AppNavigator';
 
-type Props = StackScreenProps<RootStackParamList, 'Products'>;
+type Props = StackScreenProps<MoreStackParamList, 'Products'>;
 
 type Category = 'Todos' | 'Entradas' | 'Platos fuertes' | 'Bebidas' | 'Postres';
 
@@ -40,7 +40,7 @@ const MOCK_PRODUCTS: Product[] = [
   { id: '10', name: 'Agua de Horchata', price: '$30.00', emoji: '🥤', stock: 'Disponible', category: 'Bebidas' },
 ];
 
-export default function ProductsScreen({ navigation }: Props) {
+export function ProductsScreen({ navigation }: Props) {
   const [activeCategory, setActiveCategory] = useState<Category>('Todos');
   const [searchQuery, setSearchQuery] = useState('');
 

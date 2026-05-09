@@ -12,25 +12,27 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { AuthStackParamList } from '../navigation/AppNavigator';
+import { useLogin } from '../hooks/useApi';
 
-type Props = StackScreenProps<RootStackParamList, 'Login'>;
+type Props = StackScreenProps<AuthStackParamList, 'Login'>;
 
-export default function LoginScreen({ navigation }: Props) {
+export function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading, error } = useLogin();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       return;
     }
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      navigation.navigate('Dashboard');
-    }, 1000);
+    try {
+      await login({ email, password });
+      navigation.getParent()?.navigate('Main');
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
   const handleForgotPassword = () => {

@@ -8,12 +8,16 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { MainTabParamList } from '../navigation/AppNavigator';
 import KpiCard from '../components/KpiCard';
 import OrderItem from '../components/OrderItem';
 
-type Props = StackScreenProps<RootStackParamList, 'Dashboard'>;
+type DashboardNavigationProp = BottomTabNavigationProp<MainTabParamList>;
+
+interface Props {
+  navigation: DashboardNavigationProp;
+}
 
 const SALES_DATA = [
   { time: '08:00', percentage: 15 },
@@ -53,9 +57,24 @@ const RECENT_ORDERS = [
   },
 ];
 
-export default function DashboardScreen({ navigation }: Props) {
+export function DashboardScreen({ navigation }: Props) {
   const handleNavigate = (route: string) => {
-    navigation.navigate(route as any);
+    switch (route) {
+      case 'Orders':
+        navigation.navigate('Orders');
+        break;
+      case 'Tables':
+        navigation.navigate('Tables');
+        break;
+      case 'Cashier':
+        navigation.navigate('More');
+        break;
+      case 'Products':
+        navigation.navigate('More');
+        break;
+      default:
+        navigation.navigate(route as any);
+    }
   };
 
   return (
