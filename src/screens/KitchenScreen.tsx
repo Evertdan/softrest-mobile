@@ -40,7 +40,7 @@ const MOCK_ORDERS: Record<KitchenTab, KitchenOrder[]> = {
 
 const TABS: KitchenTab[] = ['Pendiente', 'En preparación', 'Listo'];
 
-export default function KitchenScreen() {
+export function KitchenScreen() {
   const [activeTab, setActiveTab] = useState<KitchenTab>('Pendiente');
 
   const getBorderColor = (tab: KitchenTab) => {

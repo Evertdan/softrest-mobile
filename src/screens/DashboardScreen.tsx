@@ -3,80 +3,151 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import KpiCard from '../components/KpiCard';
+import OrderItem from '../components/OrderItem';
 
 type Props = StackScreenProps<RootStackParamList, 'Dashboard'>;
 
-const MOCK_KPIS = [
-  { label: 'Ventas del día', value: '$1,245', icon: '💰', trend: '+12%' },
-  { label: 'Órdenes activas', value: '12', icon: '📋', trend: '2 nuevas' },
-  { label: 'Mesas ocupadas', value: '8/15', icon: '🪑', trend: '53%' },
-  { label: 'Productos bajos', value: '3', icon: '⚠️', trend: 'Revisar' },
+const SALES_DATA = [
+  { time: '08:00', percentage: 15 },
+  { time: '12:00', percentage: 65 },
+  { time: '14:00', percentage: 90 },
+  { time: '18:00', percentage: 45 },
+  { time: '20:00', percentage: 75 },
 ];
 
-const MOCK_ORDERS = [
-  { id: '#001', customer: 'Juan Pérez', status: 'En preparación', total: '$156.00' },
-  { id: '#002', customer: 'María García', status: 'Lista', total: '$89.50' },
-  { id: '#003', customer: 'Carlos López', status: 'Entregada', total: '$234.00' },
-  { id: '#004', customer: 'Ana Martínez', status: 'En preparación', total: '$67.00' },
-  { id: '#005', customer: 'Pedro Sánchez', status: 'Lista', total: '$198.00' },
+const RECENT_ORDERS = [
+  {
+    orderNumber: '1042',
+    table: 'Mesa 4',
+    customer: 'Carlos R.',
+    status: 'En preparación',
+    statusColor: '#92400E',
+    statusBackgroundColor: '#FEF3C7',
+    amount: '$45.50',
+  },
+  {
+    orderNumber: '1041',
+    table: 'Para llevar',
+    customer: 'Ana M.',
+    status: 'Lista',
+    statusColor: '#1E40AF',
+    statusBackgroundColor: '#DBEAFE',
+    amount: '$28.00',
+  },
+  {
+    orderNumber: '1040',
+    table: 'Mesa 12',
+    customer: 'Luis G.',
+    status: 'Entregada',
+    statusColor: '#065F46',
+    statusBackgroundColor: '#D1FAE5',
+    amount: '$112.00',
+  },
 ];
-
-const HOURS = ['8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm'];
-const BAR_HEIGHTS = [40, 65, 85, 100, 75, 90, 55];
 
 export default function DashboardScreen({ navigation }: Props) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'En preparación':
-        return { bg: '#FEF3C7', text: '#92400E' };
-      case 'Lista':
-        return { bg: '#DBEAFE', text: '#1E40AF' };
-      case 'Entregada':
-        return { bg: '#D1FAE5', text: '#065F46' };
-      default:
-        return { bg: '#F3F4F6', text: '#374151' };
-    }
+  const handleNavigate = (route: string) => {
+    navigation.navigate(route as any);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>¡Hola, Admin! 👋</Text>
-            <Text style={styles.date}>Viernes, 8 de Mayo 2026</Text>
-          </View>
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <MaterialIcons name="restaurant" size={24} color="#C05621" />
+          <Text style={styles.headerTitle}>SoftRest</Text>
+        </View>
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
+            <MaterialIcons name="notifications" size={24} color="#57423A" />
+          </TouchableOpacity>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>A</Text>
           </View>
         </View>
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.greeting}>
+          <Text style={styles.greetingTitle}>¡Hola, Admin!</Text>
+          <Text style={styles.greetingDate}>Viernes, 8 de Mayo</Text>
+        </View>
 
         <View style={styles.kpiGrid}>
-          {MOCK_KPIS.map((kpi, index) => (
-            <View key={index} style={styles.kpiCard}>
-              <Text style={styles.kpiIcon}>{kpi.icon}</Text>
-              <Text style={styles.kpiValue}>{kpi.value}</Text>
-              <Text style={styles.kpiLabel}>{kpi.label}</Text>
-              <Text style={styles.kpiTrend}>{kpi.trend}</Text>
-            </View>
-          ))}
+          <TouchableOpacity 
+            activeOpacity={0.8}
+            onPress={() => handleNavigate('Cashier')}
+          >
+            <KpiCard
+              title="Ventas del día"
+              value="$1,245"
+              icon="payments"
+              badge="+14%"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            activeOpacity={0.8}
+            onPress={() => handleNavigate('Orders')}
+          >
+            <KpiCard
+              title="Órdenes activas"
+              value="12"
+              icon="list-alt"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            activeOpacity={0.8}
+            onPress={() => handleNavigate('Tables')}
+          >
+            <KpiCard
+              title="Mesas ocupadas"
+              value="8"
+              icon="table-restaurant"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            activeOpacity={0.8}
+            onPress={() => handleNavigate('Products')}
+          >
+            <KpiCard
+              title="Productos bajos"
+              value="3"
+              icon="inventory-2"
+              iconColor="#ba1a1a"
+              iconBackgroundColor="rgba(186, 26, 26, 0.1)"
+              warningIcon={true}
+            />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.chartCard}>
-          <Text style={styles.chartTitle}>Ventas por hora</Text>
-          <View style={styles.chartContainer}>
-            {BAR_HEIGHTS.map((height, index) => (
-              <View key={index} style={styles.barContainer}>
-                <View style={[styles.bar, { height: height * 1.5 }]} />
-                <Text style={styles.barLabel}>{HOURS[index]}</Text>
+          <View style={styles.chartHeader}>
+            <Text style={styles.chartTitle}>Flujo de Ventas</Text>
+            <MaterialIcons name="more-horiz" size={24} color="#57423A" />
+          </View>
+          <View style={styles.chartContent}>
+            {SALES_DATA.map((item, index) => (
+              <View key={index} style={styles.barRow}>
+                <Text style={styles.barLabel}>{item.time}</Text>
+                <View style={styles.barBackground}>
+                  <View
+                    style={[
+                      styles.barFill,
+                      { width: `${item.percentage}%` },
+                    ]}
+                  />
+                </View>
               </View>
             ))}
           </View>
@@ -84,283 +155,199 @@ export default function DashboardScreen({ navigation }: Props) {
 
         <View style={styles.ordersCard}>
           <View style={styles.ordersHeader}>
-            <Text style={styles.ordersTitle}>Órdenes recientes</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAll}>Ver todas →</Text>
+            <Text style={styles.ordersTitle}>Órdenes Recientes</Text>
+            <TouchableOpacity 
+              activeOpacity={0.7}
+              onPress={() => handleNavigate('Orders')}
+            >
+              <Text style={styles.seeAllText}>Ver todas</Text>
             </TouchableOpacity>
           </View>
-
-          {MOCK_ORDERS.map((order, index) => {
-            const statusColor = getStatusColor(order.status);
-            return (
-              <View key={index} style={styles.orderItem}>
-                <View style={styles.orderLeft}>
-                  <Text style={styles.orderId}>{order.id}</Text>
-                  <Text style={styles.orderCustomer}>{order.customer}</Text>
-                </View>
-                <View style={styles.orderRight}>
-                  <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
-                    <Text style={[styles.statusText, { color: statusColor.text }]}>
-                      {order.status}
-                    </Text>
-                  </View>
-                  <Text style={styles.orderTotal}>{order.total}</Text>
-                </View>
-              </View>
-            );
-          })}
+          <View>
+            {RECENT_ORDERS.map((order, index) => (
+              <OrderItem
+                key={index}
+                orderNumber={order.orderNumber}
+                table={order.table}
+                customer={order.customer}
+                status={order.status}
+                statusColor={order.statusColor}
+                statusBackgroundColor={order.statusBackgroundColor}
+                amount={order.amount}
+              />
+            ))}
+          </View>
         </View>
 
-        <View style={styles.bottomNav}>
-          {[
-            { label: 'Inicio', icon: '🏠', active: true },
-            { label: 'Órdenes', icon: '📋', active: false },
-            { label: 'Productos', icon: '🍽️', active: false },
-            { label: 'Cocina', icon: '👨‍🍳', active: false },
-            { label: 'Más', icon: '⋮', active: false },
-          ].map((item, index) => (
-            <TouchableOpacity key={index} style={styles.navItem}>
-              <Text style={[styles.navIcon, item.active && styles.navIconActive]}>
-                {item.icon}
-              </Text>
-              <Text style={[styles.navLabel, item.active && styles.navLabelActive]}>
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <View style={styles.bottomPadding} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const COLORS = {
-  background: '#FAFAF9',
-  primary: '#C05621',
-  text: '#18181B',
-  textSecondary: '#3F3F46',
-  textMuted: '#71717A',
-  white: '#FFFFFF',
-  border: '#E4E4E7',
-  bar: '#C05621',
-  barBg: '#FED7AA',
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#FAFAF9',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    paddingTop: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  greeting: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: COLORS.text,
-    marginBottom: 4,
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  date: {
-    fontSize: 14,
-    color: COLORS.textMuted,
+  headerTitle: {
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '600',
+    color: '#1A1B22',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  iconButton: {
+    padding: 8,
+    borderRadius: 8,
   },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: COLORS.primary,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(192, 86, 33, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: {
-    color: COLORS.white,
-    fontSize: 18,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#C05621',
+  },
+  scrollContent: {
+    padding: 16,
+    gap: 16,
+  },
+  greeting: {
+    marginBottom: 8,
+  },
+  greetingTitle: {
+    fontSize: 24,
+    lineHeight: 32,
     fontWeight: '700',
+    color: '#1A1B22',
+    marginBottom: 4,
+  },
+  greetingDate: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '400',
+    color: '#57423A',
   },
   kpiGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 16,
     gap: 12,
   },
-  kpiCard: {
-    width: '47%',
-    backgroundColor: COLORS.white,
+  chartCard: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    marginBottom: 4,
-  },
-  kpiIcon: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  kpiValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: COLORS.text,
-    marginBottom: 4,
-  },
-  kpiLabel: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    marginBottom: 4,
-  },
-  kpiTrend: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: COLORS.primary,
-  },
-  chartCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: 12,
-    margin: 16,
-    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(222, 192, 181, 0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
   },
-  chartTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: COLORS.text,
-    marginBottom: 16,
-  },
-  chartContainer: {
+  chartHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    height: 160,
-    paddingBottom: 24,
-  },
-  barContainer: {
     alignItems: 'center',
-    flex: 1,
+    marginBottom: 16,
   },
-  bar: {
-    width: 32,
-    backgroundColor: COLORS.bar,
-    borderRadius: 6,
-    opacity: 0.8,
+  chartTitle: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '600',
+    color: '#1A1B22',
   },
-  barLabel: {
-    fontSize: 11,
-    color: COLORS.textMuted,
+  chartContent: {
+    gap: 16,
     marginTop: 8,
   },
+  barRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  barLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#57423A',
+    width: 48,
+    textAlign: 'right',
+    lineHeight: 14.4,
+  },
+  barBackground: {
+    flex: 1,
+    height: 8,
+    backgroundColor: '#F4F2FD',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: '100%',
+    backgroundColor: '#C05621',
+    borderRadius: 4,
+  },
   ordersCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    margin: 16,
-    marginTop: 0,
-    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(222, 192, 181, 0.5)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
-    marginBottom: 100,
+    overflow: 'hidden',
   },
   ordersHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(222, 192, 181, 0.3)',
   },
   ordersTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: COLORS.text,
-  },
-  seeAll: {
-    fontSize: 14,
-    color: COLORS.primary,
-    fontWeight: '600',
-  },
-  orderItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F4F4F5',
-  },
-  orderLeft: {
-    flex: 1,
-  },
-  orderId: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.text,
-    marginBottom: 2,
-  },
-  orderCustomer: {
-    fontSize: 13,
-    color: COLORS.textMuted,
-  },
-  orderRight: {
-    alignItems: 'flex-end',
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: 4,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  orderTotal: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: COLORS.text,
-  },
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: COLORS.white,
-    paddingVertical: 12,
-    paddingBottom: 24,
-    borderTopWidth: 1,
-    borderTopColor: '#F4F4F5',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  navIcon: {
     fontSize: 20,
-    marginBottom: 4,
-    opacity: 0.5,
+    lineHeight: 28,
+    fontWeight: '500',
+    color: '#1A1B22',
   },
-  navIconActive: {
-    opacity: 1,
-  },
-  navLabel: {
-    fontSize: 11,
-    color: COLORS.textMuted,
-  },
-  navLabelActive: {
-    color: COLORS.primary,
+  seeAllText: {
+    fontSize: 14,
     fontWeight: '600',
+    letterSpacing: 0.7,
+    color: '#C05621',
+    lineHeight: 16.8,
+  },
+  bottomPadding: {
+    height: 20,
   },
 });

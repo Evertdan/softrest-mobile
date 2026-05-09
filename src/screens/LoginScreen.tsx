@@ -4,13 +4,13 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
-  SafeAreaView,
-  StatusBar,
+  StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
@@ -23,102 +23,120 @@ export default function LoginScreen({ navigation }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = () => {
+    if (!email || !password) {
+      return;
+    }
     setIsLoading(true);
-    // Simulate login
     setTimeout(() => {
       setIsLoading(false);
       navigation.navigate('Dashboard');
     }, 1000);
   };
 
+  const handleForgotPassword = () => {
+    console.log('Forgot password pressed');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Logo Section */}
-          <View style={styles.logoContainer}>
-            <View style={styles.iconContainer}>
-              <Text style={styles.iconText}>🍽️</Text>
-            </View>
-            <Text style={styles.brandName}>SoftRest</Text>
-            <Text style={styles.brandSubtitle}>
-              Sistema de Gestión para Restaurantes
-            </Text>
-          </View>
-
-          {/* Login Card */}
-          <View style={styles.card}>
-            {/* Email Input */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Correo Electrónico</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputIcon}>✉️</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="tu@email.com"
-                  placeholderTextColor={COLORS.textMuted}
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <View style={styles.iconContainer}>
+                <MaterialIcons name="restaurant" size={40} color="#C05621" />
               </View>
+              <Text style={styles.title}>SoftRest</Text>
+              <Text style={styles.subtitle}>Sistema de Gestión para Restaurantes</Text>
             </View>
 
-            {/* Password Input */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Contraseña</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputIcon}>🔒</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="••••••"
-                  placeholderTextColor={COLORS.textMuted}
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                />
+            <View style={styles.card}>
+              <View style={styles.form}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Correo Electrónico</Text>
+                  <View style={styles.inputWrapper}>
+                    <View style={styles.inputIcon}>
+                      <MaterialIcons
+                        name="mail"
+                        size={20}
+                        color="rgba(87, 66, 58, 0.4)"
+                      />
+                    </View>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="tu@email.com"
+                      placeholderTextColor="rgba(87, 66, 58, 0.4)"
+                      value={email}
+                      onChangeText={setEmail}
+                      autoCapitalize="none"
+                      keyboardType="email-address"
+                      autoComplete="email"
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Contraseña</Text>
+                  <View style={styles.inputWrapper}>
+                    <View style={styles.inputIcon}>
+                      <MaterialIcons
+                        name="lock"
+                        size={20}
+                        color="rgba(87, 66, 58, 0.4)"
+                      />
+                    </View>
+                    <TextInput
+                      style={[styles.input, styles.inputWithRightIcon]}
+                      placeholder="••••••"
+                      placeholderTextColor="rgba(87, 66, 58, 0.4)"
+                      value={password}
+                      onChangeText={setPassword}
+                      secureTextEntry={!showPassword}
+                      autoComplete="password"
+                    />
+                    <TouchableOpacity
+                      style={styles.rightIcon}
+                      onPress={() => setShowPassword(!showPassword)}
+                      activeOpacity={0.7}
+                    >
+                      <MaterialIcons
+                        name={showPassword ? 'visibility' : 'visibility-off'}
+                        size={20}
+                        color="rgba(87, 66, 58, 0.4)"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
                 <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeIcon}
+                  style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+                  onPress={handleLogin}
+                  disabled={isLoading}
+                  activeOpacity={0.8}
                 >
-                  <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                  <Text style={styles.loginButtonText}>
+                    {isLoading ? 'Iniciando...' : 'Iniciar Sesión'}
+                  </Text>
                 </TouchableOpacity>
               </View>
+
+              <TouchableOpacity
+                style={styles.forgotPasswordContainer}
+                onPress={handleForgotPassword}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.forgotPasswordText}>
+                  ¿Olvidaste tu contraseña?
+                </Text>
+              </TouchableOpacity>
             </View>
-
-            {/* Login Button */}
-            <TouchableOpacity
-              style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
-              onPress={handleLogin}
-              disabled={isLoading}
-            >
-              <Text style={styles.loginButtonText}>
-                {isLoading ? 'Iniciando...' : 'Iniciar Sesión'}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Forgot Password */}
-            <TouchableOpacity style={styles.forgotPasswordContainer}>
-              <Text style={styles.forgotPasswordText}>
-                ¿Olvidaste tu contraseña?
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Demo Credentials */}
-          <View style={styles.demoContainer}>
-            <Text style={styles.demoText}>Credenciales demo:</Text>
-            <Text style={styles.demoCredentials}>admin@softrest.mx / admin123</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -126,22 +144,10 @@ export default function LoginScreen({ navigation }: Props) {
   );
 }
 
-const COLORS = {
-  background: '#FAFAF9',
-  primary: '#C05621',
-  primaryDark: '#9C4221',
-  text: '#18181B',
-  textSecondary: '#3F3F46',
-  textMuted: '#71717A',
-  white: '#FFFFFF',
-  border: '#E4E4E7',
-  shadow: 'rgba(24, 24, 27, 0.05)',
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#FAFAF9',
   },
   keyboardView: {
     flex: 1,
@@ -149,118 +155,130 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
   },
-  logoContainer: {
+  content: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 32,
     alignItems: 'center',
-    marginBottom: 32,
+    gap: 32,
+  },
+  header: {
+    alignItems: 'center',
+    gap: 8,
   },
   iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
-    backgroundColor: COLORS.primary + '15',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  iconText: {
-    fontSize: 32,
-  },
-  brandName: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: COLORS.text,
+    backgroundColor: 'rgba(192, 86, 33, 0.1)',
+    padding: 16,
+    borderRadius: 9999,
     marginBottom: 8,
-    letterSpacing: -0.02,
   },
-  brandSubtitle: {
-    fontSize: 14,
-    color: COLORS.textMuted,
+  title: {
+    fontSize: 32,
+    lineHeight: 38.4,
+    fontWeight: '600',
+    color: '#1A1B22',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '400',
+    color: '#57423A',
     textAlign: 'center',
   },
   card: {
-    backgroundColor: COLORS.white,
+    width: '100%',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 24,
-    shadowColor: '#000',
+    borderWidth: 1,
+    borderColor: 'rgba(222, 192, 181, 0.3)',
+    shadowColor: '#18181B',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 12,
-    elevation: 2,
+    elevation: 3,
+    gap: 16,
   },
-  inputContainer: {
-    marginBottom: 20,
+  form: {
+    gap: 16,
   },
-  inputLabel: {
+  inputGroup: {
+    gap: 4,
+  },
+  label: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
-    marginBottom: 8,
+    letterSpacing: 0.7,
+    color: '#1A1B22',
+    lineHeight: 16.8,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    backgroundColor: COLORS.background,
+    position: 'relative',
   },
   inputIcon: {
-    fontSize: 20,
-    marginRight: 8,
-    opacity: 0.6,
+    position: 'absolute',
+    left: 12,
+    zIndex: 1,
+  },
+  rightIcon: {
+    position: 'absolute',
+    right: 12,
+    zIndex: 1,
   },
   input: {
     flex: 1,
-    paddingVertical: 12,
+    height: 44,
+    paddingLeft: 44,
+    paddingRight: 12,
+    backgroundColor: '#FAFAF9',
+    borderWidth: 1,
+    borderColor: '#DEC0B5',
+    borderRadius: 8,
     fontSize: 16,
-    color: COLORS.text,
+    lineHeight: 24,
+    color: '#1A1B22',
   },
-  eyeIcon: {
-    padding: 8,
+  inputWithRightIcon: {
+    paddingRight: 44,
   },
   loginButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 10,
-    paddingVertical: 14,
+    width: '100%',
+    height: 48,
+    backgroundColor: '#C05621',
+    borderRadius: 8,
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   loginButtonDisabled: {
     opacity: 0.7,
   },
   loginButtonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.7,
+    color: '#FFFFFF',
+    lineHeight: 16.8,
   },
   forgotPasswordContainer: {
     alignItems: 'center',
-    marginTop: 16,
+    paddingTop: 4,
   },
   forgotPasswordText: {
-    color: COLORS.textSecondary,
     fontSize: 14,
-  },
-  demoContainer: {
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  demoText: {
-    color: COLORS.textMuted,
-    fontSize: 12,
-  },
-  demoCredentials: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 4,
+    lineHeight: 21,
+    color: '#57423A',
+    fontWeight: '400',
   },
 });
